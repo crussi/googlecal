@@ -1,0 +1,25 @@
+<head>
+  <title>googlecal</title>
+    <!--<script src="https://apis.google.com/js/client.js"></script>-->
+</head>
+
+<body>
+  <h1>Welcome to Meteor!</h1>
+
+  {{> hello}}
+</body>
+
+<template name="hello">
+    {{> loginButtons}}
+    <button id="googlelogin">Login with Google</button>
+    <span>Authorize access to Google Calendar API</span>
+    <!--Button for the user to click to initiate auth sequence -->
+    <button id="runtest">
+        run test
+    </button>
+    <p>You've pressed the button {{counter}} times.</p>
+    <div id="authorize-div" style="display: none">
+        <p>authorized</p>
+    </div>
+
+</template>
