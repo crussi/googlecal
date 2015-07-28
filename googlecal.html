@@ -22,4 +22,11 @@
         <p>authorized</p>
     </div>
 
+    {{#each calendarList}}
+        {{> calendar}}
+    {{/each}}
+    <p>{{servertime.date}}</p>
+</template>
+<template name="calendar">
+    <p>{{this}}</p>
 </template>

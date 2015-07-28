@@ -5,12 +5,27 @@ var scopes = ['email',
 ];
 
 if (Meteor.isClient) {
+  Meteor.subscribe('calendar-list');
+  Meteor.subscribe('helperPublication');
   // counter starts at 0
   Session.setDefault('counter', 0);
 
   Template.hello.helpers({
     counter: function () {
       return Session.get('counter');
+    },
+
+    servertime: function () {
+      return ServerTime.findOne({});
+      //return new Date();
+    },
+    calendarList: function () {
+      var list = CalendarList.findOne({});
+      if (list && list.calendars) {
+        return list.calendars;
+      } else {
+        return [];
+      }
     }
   });
 
@@ -27,7 +42,9 @@ if (Meteor.isClient) {
           console.log('google login error');
           return console.log(error.reason);
         } else {
-          console.log('google login success');
+          console.log('google login success');//Meteor.user().services.google.refreshToken;
+          //Session.set('accessToken',Meteor.user().services.google.accessToken);
+          //Session.set('refreshToken',Meteor.user().services.google.accesrefreshTokensToken);
           //FlowLayout.render('layout-auth', { content: "app" });
           //FlowRouter.go('/dashboard');
         }

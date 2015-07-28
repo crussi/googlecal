@@ -6,6 +6,122 @@ var TOKEN_PATH = TOKEN_DIR + 'calendar-api-quickstart.json';
 var google, plus, OAuth2, credentials, clientId, clientSecret, redirectUrl, oauth2Client,
     accessToken, refreshToken, calendar;
 
+var subs = { };
+
+// The helper publication
+Meteor.publish('helperPublication', function() {
+
+    // #1 ...
+    var subscription = this;
+    console.log('servertime id: ' + subscription._subscriptionId);
+    subs[subscription._subscriptionId] = subscription;
+
+    // #2
+    subscription.added( 'serverTime', 'a_random_id', {date: new Date()} );
+
+    // #3
+    subscription.onStop(function() {
+        console.log('stop servertime id: ' + subscription._subscriptionId);
+        delete subs[subscription._subscriptionId];
+    });
+});
+
+Meteor.setInterval(function() {
+    var currentTime = new Date();
+    for (var subscriptionID in subs) {
+        var subscription = subs[subscriptionID];
+        subscription.changed( 'serverTime', 'a_random_id', {date: currentTime} );
+    }
+}, 1000);
+
+Meteor.publish('calendar-list', function() {
+
+    // #1 ......
+    var subscriptionx = this;
+    //var calendars = [];
+    //var accessToken = this.user().services.google.accessToken;
+    var user = Meteor.users.findOne({_id: this.userId}, {});
+    console.log('calendar-list id: ' + subscriptionx._subscriptionId);
+    var accessToken = user.services.google.accessToken;
+    var refreshToken = user.services.google.refreshToken;
+    subs[subscriptionx._subscriptionId] = subscriptionx;
+
+    // #2...
+    var currentTime = new Date();
+    var calendarlist = [];
+    calendarlist.push("Primary");
+    calendarlist.push("Michele");
+    calendarlist.push("Isaac");
+    calendarlist.push("Family");
+    calendarlist.push("Chores");
+    //console.log(datelist);
+
+    getCalendars(accessToken, refreshToken, function (calendars) {
+        subscriptionx.added( 'calendarList', 'b_random_id', { calendars: calendars } );
+    });
+
+
+    // #3...
+    subscriptionx.onStop(function() {
+        console.log('stop calendar-list id: ' + subscriptionx._subscriptionId);
+        delete subs[subscriptionx._subscriptionId];
+    });
+
+});
+
+
+
+/* Get list of user's calendars */
+function getCalendars(accessToken, refreshToken, callback) {
+    // Retrieve tokens via token exchange explained above or set them:
+    //oauth2Client.setCredentials({
+    //    access_token: accessToken,
+    //    refresh_token: refreshToken,
+    //});
+    //calendar = google.calendar('v3');
+    //var accessTokenString = 'Bearer ' + Meteor.user().services.google.accessToken;
+    var accessTokenString = 'Bearer ' + accessToken;
+
+    var calendars = [];
+    var url = "https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=owner";
+    try {
+        HTTP.get(url,
+        {
+        //    params: {
+        //    grant_type : 'refresh_token',
+        //        refresh_token : refreshToken,
+        //        client_id : clientId,
+        //        client_secret : clientSecret,
+        //    auth: oauth2Client
+        //}
+        //    ,
+            headers: {
+                'Authorization': accessTokenString
+            }
+        }
+            , function(err, resp) {
+            if (err) {
+                console.log('err: ' + err);
+            } else {
+                console.log('success');
+                calendars = resp.data.items;
+                calendars.map(function(item) {
+                    //nextSyncToken
+                    console.log(item.summary);
+                })
+            }
+            callback(calendars);
+        });
+
+    } catch(err) {
+        console.log(err.message);
+    }
+
+
+
+}
+
+
 
 Meteor.startup(function () {
     console.log('meteor startup');
@@ -56,6 +172,56 @@ Meteor.methods({
 
 );
 
+function processCalendars() {
+
+    getCalendars2(function(calendars) {
+        if (calendars.length > 0) {
+            for (i = 0; i < calendars.length; i++) {
+                var calendar = calendars[i];
+                //listUpcomingEvents(calendar);
+                console.log(calendar.summary);
+            }
+        } else {
+            appendPre('No calendars found.','calendars');
+        }
+        callback(calendars);
+    });
+
+}
+
+
+function getCalendars2(callback) {
+    // Retrieve tokens via token exchange explained above or set them:
+    calendar = google.calendar('v3');
+    var accessTokenString = 'Bearer ' + Meteor.user().services.google.accessToken;
+    var calendars = [];
+    var url = "https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=owner";
+    try {
+        HTTP.get(url,
+            {
+                headers: {
+                    'Authorization': accessTokenString
+                }
+            }
+            , function(err, resp) {
+                if (err) {
+                    console.log('err: ' + err);
+                } else {
+                    console.log('success');
+                    calendars = resp.data.items;
+                    calendars.map(function(item) {
+                        //nextSyncToken
+                        console.log(item.summary);
+                    })
+                }
+                callback(calendars);
+            });
+
+    } catch(err) {
+        console.log(err.message);
+    }
+}
+
 function appendPre(str) {
     console.log(str);
 }
@@ -72,60 +238,6 @@ function googleProfile() {
     });
 }
 
-function processCalendars() {
-
-    getCalendars(function(calendars) {
-        if (calendars.length > 0) {
-            for (i = 0; i < calendars.length; i++) {
-                var calendar = calendars[i];
-                //listUpcomingEvents(calendar);
-                console.log(calendar.summary);
-            }
-        } else {
-            appendPre('No calendars found.','calendars');
-        }
-
-    });
-
-}
-
-/* Get list of user's calendars */
-function getCalendars(callback) {
-    calendar = google.calendar('v3');
-    var accessTokenString = 'Bearer ' + Meteor.user().services.google.accessToken;
-    //var request = calendar.calendarList.list({
-    //    minAccessRole : 'owner'
-    //});
-    var calendars = [];
-    //request.execute(function(resp) {
-    //    calendars = resp.items;
-    //    callback(calendars);
-    //});
-
-    try {
-        HTTP.get("https://www.googleapis.com/calendar/v3/users/me/calendarList", {
-            headers: {
-                'Authorization': accessTokenString
-            }
-        }, function(err, resp) {
-            if (err) {
-                console.log('err: ' + err);
-            } else {
-                console.log('success');
-                calendars = resp.data.items;
-                calendars.map(function(item) {
-                    console.log(item.summary);
-                })
-            }
-        });
-
-    } catch(err) {
-        console.log(err.message);
-    }
-
-
-
-}
 
 /**
  * Print the summary and start datetime/date of the next ten events in
