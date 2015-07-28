@@ -17,13 +17,14 @@ if (Meteor.isClient) {
 
     servertime: function () {
       return ServerTime.findOne({});
-      //return new Date();
     },
     calendarList: function () {
       var list = CalendarList.findOne({});
       if (list && list.calendars) {
+        console.log('calendarList displayed');
         return list.calendars;
       } else {
+        console.log('calendarList NOT displayed');
         return [];
       }
     }
@@ -43,10 +44,6 @@ if (Meteor.isClient) {
           return console.log(error.reason);
         } else {
           console.log('google login success');//Meteor.user().services.google.refreshToken;
-          //Session.set('accessToken',Meteor.user().services.google.accessToken);
-          //Session.set('refreshToken',Meteor.user().services.google.accesrefreshTokensToken);
-          //FlowLayout.render('layout-auth', { content: "app" });
-          //FlowRouter.go('/dashboard');
         }
       });
     },
