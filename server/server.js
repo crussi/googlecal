@@ -26,12 +26,15 @@ Meteor.publish('calendar-list', function() {
     //var accessToken = this.user().services.google.accessToken;
     var user = Meteor.users.findOne({_id: this.userId}, {});
     console.log('calendar-list id: ' + subscriptionx._subscriptionId);
-    var accessToken = user.services.google.accessToken;
+    //var accessToken = user.services.google.accessToken;
     var refreshToken = user.services.google.refreshToken;
+    //var expiresAt = user.services.google.expiresAt;
     subs[subscriptionx._subscriptionId] = subscriptionx;
 
     // #2...
     var currentTime = new Date();
+
+    var accessToken = refreshAccessToken2(refreshToken);
 
     getCalendars(accessToken, refreshToken, function (calendars) {
         subscriptionx.added( 'calendarList', 'b_random_id', { calendars: calendars } );
@@ -94,6 +97,45 @@ function getCalendars(accessToken, refreshToken, callback) {
 
     } catch(err) {
         console.log(err.message);
+    }
+}
+
+function refreshAccessToken(refreshToken){
+
+    HTTP.post("https://www.googleapis.com/oauth2/v3/token",
+        {
+            params: {
+                'client_id': clientId,
+                'client_secret': clientSecret,
+                'refresh_token': refreshToken,
+                'grant_type': 'refresh_token'
+            }
+        },
+
+        function(err, result){
+            if (err) {
+                console.log('err: ' + err);
+            } else {
+                console.log('success: ' + result.data.accessToken);
+            }
+    });
+}
+
+function refreshAccessToken2(refreshToken){
+
+    var result = HTTP.post("https://www.googleapis.com/oauth2/v3/token",
+        {
+            params: {
+                'client_id': clientId,
+                'client_secret': clientSecret,
+                'refresh_token': refreshToken,
+                'grant_type': 'refresh_token'
+            }
+        });
+    if (result.statusCode < 300) {
+        return result.data.access_token;
+    } else {
+        return null;
     }
 }
 

@@ -15,9 +15,9 @@ if (Meteor.isClient) {
       return Session.get('counter');
     },
 
-    servertime: function () {
-      return ServerTime.findOne({});
-    },
+    //servertime: function () {
+    //  return ServerTime.findOne({});
+    //},
     calendarList: function () {
       var list = CalendarList.findOne({});
       if (list && list.calendars) {
@@ -36,6 +36,7 @@ if (Meteor.isClient) {
 
       return Meteor.loginWithGoogle({
         //requestPermissions: ['email'],
+        forceApprovalPrompt: true,
         requestPermissions: scopes,
         requestOfflineToken: true
       }, function(error) {
