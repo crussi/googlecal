@@ -6,7 +6,7 @@ var scopes = ['email',
 
 if (Meteor.isClient) {
   Meteor.subscribe('calendar-list');
-  Meteor.subscribe('helperPublication');
+
   // counter starts at 0
   Session.setDefault('counter', 0);
 

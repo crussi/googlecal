@@ -1,12 +1,12 @@
 <head>
-  <title>googlecal</title>
+    <title>googlecal</title>
     <!--<script src="https://apis.google.com/js/client.js"></script>-->
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+<h1>Welcome to Meteor!</h1>
 
-  {{> hello}}
+{{> hello}}
 </body>
 
 <template name="hello">
@@ -21,9 +21,11 @@
     <div id="authorize-div" style="display: none">
         <p>authorized</p>
     </div>
+
     {{#each calendarList}}
         {{> calendar}}
     {{/each}}
+    <!--<p>{{servertime.date}}</p>-->
 </template>
 <template name="calendar">
     <p>{{summary}}</p>
