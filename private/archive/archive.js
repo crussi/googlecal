@@ -69,7 +69,7 @@ function processCalendars() {
 
 }
 
-function getCalendars2(callback) {
+function getCalendars3(callback) {
     // Retrieve tokens via token exchange explained above or set them:
     calendar = google.calendar('v3');
     var accessTokenString = 'Bearer ' + Meteor.user().services.google.accessToken;
