@@ -28,8 +28,9 @@ Meteor.publish('calendar-list', function() {
     });
 
     //calendars = Meteor.call('getCalendars',user);
-    GoogleAccess.refreshToken(user);
-    Calendar.getCalendars(user, function (err, calendars) {
+    //GoogleAccess.refreshToken(user);
+    var calevtopt = _.extend({},CalendarEventOptions);
+    Calendar.getCalendars(user, calevtopt, function (err, calendars) {
         console.log('calendars changed length: ' + calendars.length);
         subscriptionx.changed( 'calendarList', 'b_random_id', { calendars: calendars } );
 
