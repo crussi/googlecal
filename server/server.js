@@ -20,10 +20,6 @@ Meteor.publish('calendar-list', function() {
     //var accessToken = refreshAccessToken2(refreshToken);
     var user = Meteor.users.findOne(this.userId);
 
-    //calendars = Meteor.call('getCalendars',user);
-    calendars = Calendar.getCalendars(user);
-    console.log('calendars length: ' + calendars.length);
-    
     subscriptionx.added( 'calendarList', 'b_random_id', { calendars: calendars } );
     // #3...
     subscriptionx.onStop(function() {
@@ -31,6 +27,14 @@ Meteor.publish('calendar-list', function() {
         delete subs[subscriptionx._subscriptionId];
     });
 
+    //calendars = Meteor.call('getCalendars',user);
+    GoogleAccess.refreshToken(user);
+    Calendar.getCalendars(user, function (err, calendars) {
+        console.log('calendars changed length: ' + calendars.length);
+        subscriptionx.changed( 'calendarList', 'b_random_id', { calendars: calendars } );
+
+
+    });
 });
 
 Meteor.methods({

@@ -27,4 +27,10 @@
 </template>
 <template name="calendar">
     <p>{{summary}}</p>
+    {{#each this.events}}
+        {{>event}}
+    {{/each}}
+</template>
+<template name="event">
+    <p style="margin-left:20px">{{summary}}</p>
 </template>
