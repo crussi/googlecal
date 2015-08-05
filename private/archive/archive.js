@@ -4,7 +4,7 @@ Meteor.publish('helperPublication', function() {
     // #1 ...
     var subscription = this;
     console.log('servertime id: ' + subscription._subscriptionId);
-    subs[subscription._subscriptionId] = subscription;
+    subscriptions[subscription._subscriptionId] = subscription;
 
     // #2
     subscription.added( 'serverTime', 'a_random_id', {date: new Date()} );
@@ -12,14 +12,14 @@ Meteor.publish('helperPublication', function() {
     // #3
     subscription.onStop(function() {
         console.log('stop servertime id: ' + subscription._subscriptionId);
-        delete subs[subscription._subscriptionId];
+        delete subscriptions[subscription._subscriptionId];
     });
 });
 
 Meteor.setInterval(function() {
     var currentTime = new Date();
-    for (var subscriptionID in subs) {
-        var subscription = subs[subscriptionID];
+    for (var subscriptionID in subscriptions) {
+        var subscription = subscriptions[subscriptionID];
         subscription.changed( 'serverTime', 'a_random_id', {date: currentTime} );
     }
 }, 1000);

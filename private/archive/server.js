@@ -4,7 +4,7 @@
 var google, plus, OAuth2, credentials, clientId, clientSecret, redirectUrl, oauth2Client,
     accessToken, refreshToken, calendar;
 
-subs = { };
+subscriptions = { };
 
 
 Meteor.startup(function () {
