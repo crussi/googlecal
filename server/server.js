@@ -21,6 +21,7 @@ Meteor.publish('calendar-list', function() {
         subscription.changed( 'calendarList', 'b_random_id', { calendars: calendars } );
     });
     Calendar.getEvents(user, calevtopts, function(err, calevents) {
+        //some change
         console.log('done');
         console.log(calevents.length);
     });
