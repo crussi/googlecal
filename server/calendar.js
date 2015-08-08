@@ -37,6 +37,7 @@ CalendarEvent = {
         if (gcalevent.start.dateTime) {
             this.start.hasTime = true;
             this.start.dateTime = gcalevent.start.dateTime;
+            this.startdate = gcalevent.start.dateTime;
         } else if (gcalevent.start.date) {
             this.start.dateTime = gcalevent.start.date;
         }
@@ -64,7 +65,7 @@ Calendar = {
         var i, j, calendars = this._getCalendarList(user);
         for (i = 0; i < calendars.length; i++) {
             winston.debug('Calendar: ' + calendars[i].summary);
-            calendars = _.extend(calendars[i],{events:[]});
+            calendars[i] = _.extend(calendars[i],{events:[]});
             if (calendars[i] && calendars[i].id) {
                 calendars[i].events = this._getCalendarEvents(user, calevtopts, calendars[i].id);
                 //for (j = 0; j < calendars[i].events.length; j++) {

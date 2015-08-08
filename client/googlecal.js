@@ -8,6 +8,7 @@ var scopes = ['email',
 ];
 
 Meteor.subscribe('calendar-list');
+Meteor.subscribe('calendar-events');
 
 // counter starts at 0
 Session.setDefault('counter', 0);
@@ -26,7 +27,18 @@ Template.hello.helpers({
       console.log('calendarList NOT displayed');
       return [];
     }
+  },
+  calendarEvents: function () {
+    var list = CalendarEvents.findOne({});
+    if (list && list.calevents) {
+      console.log('calendarEvents displayed');
+      return list.calevents;
+    } else {
+      console.log('calendarEvents NOT displayed');
+      return [];
+    }
   }
+
 });
 
 Template.hello.events({

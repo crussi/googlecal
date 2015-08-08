@@ -18,8 +18,8 @@
     <div id="authorize-div" style="display: none">
         <p>authorized</p>
     </div>
-    {{#each calendarList}}
-        {{> calendar}}
+    {{#each calendarEvents}}
+        {{> calEvent}}
     {{/each}}
 </template>
 <template name="calendar">
@@ -30,4 +30,12 @@
 </template>
 <template name="event">
     <p style="margin-left:20px">{{summary}}</p>
+</template>
+<template name="calEvent">
+    {{#if start.hasTime}}
+        <p style="margin-left:20px">{{calendarName}} - {{summary}} {{startdate}}  {{moFormat start.dateTime 'llll'}}</p>
+    {{else}}
+        <p style="margin-left:20px">{{calendarName}} - {{summary}}</p>
+    {{/if}}
+
 </template>
